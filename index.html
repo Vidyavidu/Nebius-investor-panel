@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRISM Pitch Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0515;
+      --panel: rgba(30, 16, 48, 0.74);
+      --input-panel: rgba(40, 20, 65, 0.64);
+      --text: #f8fafc;
+      --page-text: #f8fafc;
+      --muted: #c4b5fd;
+      --panel-muted: #d8c8ff;
+      --border: rgba(168, 85, 247, 0.24);
+      --panel-border: rgba(236, 72, 153, 0.26);
+      --accent: #a855f7;
+      --accent-hot: #ec4899;
+      --accent-dark: #7e22ce;
+      --danger: #fb7185;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 12%, rgba(168, 85, 247, 0.24), transparent 32%),
+        radial-gradient(circle at 82% 26%, rgba(236, 72, 153, 0.18), transparent 30%),
+        linear-gradient(140deg, #1a0b2e 0%, #12081f 48%, #0d0515 100%);
+      color: var(--page-text);
+      font-family: "Inter", Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 44px 0 28px;
+    }
+
+    .app-header {
+      display: block;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(38px, 6vw, 72px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: linear-gradient(90deg, #c084fc 0%, #a855f7 42%, #ec4899 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 18px 44px rgba(168, 85, 247, 0.28);
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      max-width: 700px;
+      margin-inline: auto;
+      font-size: 16px;
+    }
+
+    .input-panel,
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      box-shadow:
+        0 22px 70px rgba(0, 0, 0, 0.34),
+        0 0 36px rgba(168, 85, 247, 0.12);
+      backdrop-filter: blur(18px);
+    }
+
+    .input-panel {
+      background: var(--input-panel);
+      width: min(780px, 100%);
+      padding: 22px;
+      margin: 0 auto 24px;
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.34),
+        0 0 44px rgba(236, 72, 153, 0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #f5f3ff;
+    }
+
+    textarea,
+    input {
+      width: 100%;
+      border: 1px solid rgba(216, 180, 254, 0.22);
+      border-radius: 6px;
+      color: var(--text);
+      font: inherit;
+      background: rgba(12, 6, 22, 0.54);
+    }
+
+    textarea {
+      min-height: 180px;
+      padding: 14px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    textarea::placeholder {
+      color: rgba(216, 180, 254, 0.56);
+    }
+
+    textarea:focus {
+      border-color: rgba(236, 72, 153, 0.78);
+      box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.18);
+    }
+
+    input {
+      padding: 10px 12px;
+    }
+
+    button {
+      min-height: 43px;
+      padding: 0 22px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+      color: #ffffff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 12px 30px rgba(236, 72, 153, 0.32), 0 0 28px rgba(168, 85, 247, 0.24);
+      transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    }
+
+    button:hover {
+      filter: brightness(1.12) saturate(1.08);
+      box-shadow: 0 18px 40px rgba(236, 72, 153, 0.42), 0 0 40px rgba(168, 85, 247, 0.34);
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(236, 72, 153, 0.26);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      transform: none;
+    }
+
+    .status {
+      min-height: 24px;
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .persona-icon {
+      display: inline-grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--persona-accent);
+      color: #ffffff;
+      font-size: 21px;
+      line-height: 1;
+      box-shadow: 0 8px 22px color-mix(in srgb, var(--persona-accent), transparent 58%);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      margin: 0;
+      color: #e9d5ff;
+      white-space: pre-wrap;
+    }
+
+    .score-card {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 24px;
+      border-color: rgba(236, 72, 153, 0.38);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(236, 72, 153, 0.2), transparent 36%),
+        linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(255, 255, 255, 0) 56%),
+        var(--panel);
+      box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.38),
+        0 0 54px rgba(236, 72, 153, 0.18);
+      animation: scoreReveal 420ms ease-out both;
+    }
+
+    .score-card .card-header {
+      margin-bottom: 8px;
+    }
+
+    .score-copy {
+      min-width: 0;
+    }
+
+    .score-gauge {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      display: grid;
+      place-items: center;
+    }
+
+    .score-gauge svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+      overflow: visible;
+    }
+
+    .score-track,
+    .score-progress {
+      fill: none;
+      stroke-width: 12;
+      stroke-linecap: round;
+    }
+
+    .score-track {
+      stroke: rgba(216, 180, 254, 0.16);
+    }
+
+    .score-progress {
+      stroke: url(#scoreGradient);
+      stroke-dasharray: 326.73;
+      stroke-dashoffset: 326.73;
+      filter: drop-shadow(0 0 10px var(--score-glow, rgba(236, 72, 153, 0.6)));
+      transition: stroke 240ms ease;
+    }
+
+    .score-value {
+      position: relative;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 3px;
+      color: #ffffff;
+      font-weight: 800;
+      text-shadow: 0 0 24px rgba(236, 72, 153, 0.38);
+    }
+
+    .score-number {
+      font-size: 42px;
+      line-height: 1;
+      min-width: 2ch;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .score-unit {
+      color: #f0abfc;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .persona-card {
+      position: relative;
+      border-left: 6px solid var(--persona-accent);
+      background:
+        linear-gradient(135deg, var(--persona-tint), rgba(255, 255, 255, 0) 54%),
+        var(--panel);
+      box-shadow:
+        0 18px 56px rgba(0, 0, 0, 0.3),
+        0 0 28px color-mix(in srgb, var(--persona-accent), transparent 78%);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: personaEnter 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: opacity, transform;
+    }
+
+    .persona-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 3px;
+      background: var(--persona-accent);
+      opacity: 0.85;
+    }
+
+    .persona-card:nth-of-type(2) {
+      animation-delay: 80ms;
+    }
+
+    .persona-card:nth-of-type(3) {
+      animation-delay: 430ms;
+    }
+
+    .persona-card:nth-of-type(4) {
+      animation-delay: 780ms;
+    }
+
+    @keyframes personaEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.98);
+        filter: blur(3px);
+      }
+
+      55% {
+        opacity: 1;
+        filter: blur(0);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes scoreReveal {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .score-card,
+      .persona-card {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+    }
+
+    .brand-footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 26px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(236, 72, 153, 0.28);
+      border-radius: 999px;
+      background: rgba(30, 16, 48, 0.62);
+      color: #f5d0fe;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.22);
+    }
+
+    .brand-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ec4899;
+      box-shadow: 0 0 14px rgba(236, 72, 153, 0.8);
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 24px, 1120px);
+        padding: 20px 0;
+      }
+
+      .app-header {
+        display: block;
+      }
+
+      button {
+        width: 100%;
+        margin-top: 12px;
+      }
+
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .score-card {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .score-copy .card-header {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="app-header">
+      <div>
+        <h1>PRISM Pitch Panel</h1>
+        <p class="subtitle">Test a startup pitch against three critical personas and a direct viability score.</p>
+      </div>
+    </header>
+
+    <section class="input-panel" aria-label="Pitch analyzer">
+      <label for="pitch">Startup pitch</label>
+      <textarea id="pitch" placeholder="Paste your startup pitch here..."></textarea>
+
+      <button id="analyzeButton" type="button">Analyze Pitch</button>
+    </section>
+
+    <p id="status" class="status" aria-live="polite"></p>
+    <section id="results" class="results" aria-label="Analysis results"></section>
+
+    <footer class="brand-footer">
+      <span class="brand-badge"><span class="brand-dot" aria-hidden="true"></span>Powered by Nebius Token Factory</span>
+    </footer>
+  </main>
+
+  <script>
+    const API_URL = "https://api.studio.nebius.com/v1/chat/completions";
+    const MODEL = "meta-llama/Llama-3.3-70B-Instruct";
+    const NEBIUS_API_KEY = "v1.CmMKHHN0YXRpY2tleS1lMDB6N20xaDNrNXZmZ21wbjISIXNlcnZpY2VhY2NvdW50LWUwMHg3ZHZtbWtnOTJyaHR6NjILCOup2NEGEJ_itw86DAjqrPCcBxCAguXmAUACWgNlMDA.AAAAAAAAAAG3bmJAyNeBlIzilK2yyPwU5vQi7Ie0OQI03ADYdgAGPSKfCXsHH7XaNilwKy8JfE4AqaY72l6cnfuwwAKEjT4F";
+
+    const personas = [
+      {
+        name: "THE COMPETITOR",
+        icon: "\u2694\uFE0F",
+        accent: "#a855f7",
+        tint: "rgba(168, 85, 247, 0.13)",
+        prompt:
+          "You are the CEO of a well-funded rival startup that has just heard this pitch. " +
+          "You see this company as a direct threat and you're already thinking about how to crush them. " +
+          "Analyze their idea ruthlessly: identify their weakest points, which features are easy to clone, " +
+          "where the market gaps are that you could exploit, and what business risks could sink them before they scale. " +
+          "Speak in sharp, confident first-person like someone who's already drafting a counter-strategy. " +
+          "End with one killer line: how you'd beat them. 3-4 sentences, no bullet points."
+      },
+      {
+        name: "THE HUMAN ADVOCATE",
+        icon: "\u2764\uFE0F",
+        accent: "#ec4899",
+        tint: "rgba(236, 72, 153, 0.12)",
+        prompt:
+          "You are a human rights advocate and ethicist who has seen countless startups promise to " +
+          "change the world while leaving real people worse off. You don't care about valuations, " +
+          "growth metrics, or investor returns. You only care about one thing: does this genuinely make " +
+          "people's lives better? Be brutally honest. Call out performative impact, hidden harms, who gets " +
+          "left out, whether this builds dependency or empowerment, and whether the world actually needs this " +
+          "or whether it's just a solution looking for a problem. No flattery, no softening. Speak in " +
+          "direct, grounded first-person. 3-4 sentences, no bullet points."
+      },
+      {
+        name: "THE JOURNALIST",
+        icon: "\uD83D\uDCF0",
+        accent: "#d946ef",
+        tint: "rgba(217, 70, 239, 0.12)",
+        prompt:
+          "You are a sharp tech journalist who writes for a generation that scrolls fast, trusts nothing, " +
+          "and cancels quickly. You're not writing for a newspaper; you're thinking in tweets, threads, " +
+          "TikToks, and Reddit AMAs. You look at this startup and immediately ask: is this a story? Would " +
+          "this go viral for the right reasons or the wrong ones? Could this become a meme, a controversy, " +
+          "a movement? Who would hate this and post about it? Who would defend it? Be real, be current, be a " +
+          "little cynical. Speak in punchy first-person like someone already drafting the headline in their " +
+          "head. 3-4 sentences, no bullet points."
+      }
+    ];
+
+    const scorePrompt =
+      "You are a skeptical early-stage investor. Score this startup pitch from 0 to 100 based on clarity, " +
+      "market urgency, differentiation, credibility, and business potential. Return only compact JSON with " +
+      "two keys: score, a number from 0 to 100, and rationale, a 1-2 sentence explanation.";
+
+    const pitchInput = document.getElementById("pitch");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const statusEl = document.getElementById("status");
+    const resultsEl = document.getElementById("results");
+
+    analyzeButton.addEventListener("click", analyzePitch);
+
+    async function analyzePitch() {
+      const pitch = pitchInput.value.trim();
+
+      if (!pitch) {
+        setStatus("Enter a startup pitch first.", true);
+        return;
+      }
+
+      if (!NEBIUS_API_KEY || NEBIUS_API_KEY === "PASTE_YOUR_NEBIUS_API_KEY_HERE") {
+        setStatus("Set NEBIUS_API_KEY in index.html before analyzing.", true);
+        return;
+      }
+
+      setLoading(true);
+      setStatus("Analyzing pitch...");
+      resultsEl.innerHTML = "";
+
+      try {
+        const personaRequests = personas.map((persona) =>
+          requestCompletion(persona.prompt, `Here is the startup pitch:\n\n${pitch}`)
+            .then((content) => ({ ...persona, content }))
+        );
+
+        const scoreRequest = requestCompletion(scorePrompt, `Here is the startup pitch:\n\n${pitch}`)
+          .then(parseScore);
+
+        const [personaResults, scoreResult] = await Promise.all([
+          Promise.all(personaRequests),
+          scoreRequest
+        ]);
+
+        renderResults(personaResults, scoreResult);
+        setStatus("Analysis complete.");
+      } catch (error) {
+        setStatus(error.message || "Analysis failed.", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function requestCompletion(systemPrompt, userPrompt) {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${NEBIUS_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Nebius API request failed: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || "";
+    }
+
+    function parseScore(content) {
+      try {
+        const jsonText = content.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+        const parsed = JSON.parse(jsonText);
+        return {
+          score: Number(parsed.score),
+          rationale: String(parsed.rationale || "")
+        };
+      } catch {
+        return {
+          score: null,
+          rationale: content
+        };
+      }
+    }
+
+    function renderResults(personaResults, scoreResult) {
+      const scoreCard = document.createElement("article");
+      scoreCard.className = "card score-card";
+      scoreCard.innerHTML = `
+        <div class="score-gauge" aria-label="Pitch score">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop class="score-stop-a" offset="0%" stop-color="#a855f7"></stop>
+                <stop class="score-stop-b" offset="100%" stop-color="#ec4899"></stop>
+              </linearGradient>
+            </defs>
+            <circle class="score-track" cx="60" cy="60" r="52"></circle>
+            <circle class="score-progress" cx="60" cy="60" r="52"></circle>
+          </svg>
+          <div class="score-value">
+            <span class="score-number">0</span>
+            <span class="score-unit">/100</span>
+          </div>
+        </div>
+        <div class="score-copy">
+          <div class="card-header">
+            <h2>Score</h2>
+          </div>
+          <p></p>
+        </div>
+      `;
+      scoreCard.querySelector("p").textContent = scoreResult.rationale;
+      resultsEl.appendChild(scoreCard);
+      animateScore(scoreCard, scoreResult.score);
+
+      personaResults.forEach((result) => {
+        const card = document.createElement("article");
+        card.className = "card persona-card";
+        card.style.setProperty("--persona-accent", result.accent);
+        card.style.setProperty("--persona-tint", result.tint);
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="persona-icon" aria-hidden="true"></span>
+            <h2></h2>
+          </div>
+          <p></p>
+        `;
+        card.querySelector(".persona-icon").textContent = result.icon;
+        card.querySelector("h2").textContent = result.name;
+        card.querySelector("p").textContent = result.content;
+        resultsEl.appendChild(card);
+      });
+    }
+
+    function animateScore(scoreCard, finalScore) {
+      const numberEl = scoreCard.querySelector(".score-number");
+      const progressEl = scoreCard.querySelector(".score-progress");
+      const stopA = scoreCard.querySelector(".score-stop-a");
+      const stopB = scoreCard.querySelector(".score-stop-b");
+      const circumference = 2 * Math.PI * 52;
+
+      if (!Number.isFinite(finalScore)) {
+        numberEl.textContent = "--";
+        return;
+      }
+
+      const target = Math.max(0, Math.min(100, Math.round(finalScore)));
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const colors = getScoreColors(target);
+
+      stopA.setAttribute("stop-color", colors.start);
+      stopB.setAttribute("stop-color", colors.end);
+      scoreCard.style.setProperty("--score-glow", colors.glow);
+      progressEl.style.strokeDasharray = circumference;
+      progressEl.style.strokeDashoffset = circumference;
+
+      if (reduceMotion) {
+        numberEl.textContent = target;
+        progressEl.style.strokeDashoffset = circumference - (target / 100) * circumference;
+        return;
+      }
+
+      const duration = 950;
+      const startTime = performance.now();
+
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        numberEl.textContent = Math.round(eased * target);
+        progressEl.style.strokeDashoffset = circumference - (eased * target / 100) * circumference;
+
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        }
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    function getScoreColors(score) {
+      if (score < 45) {
+        return {
+          start: "#fb7185",
+          end: "#ef4444",
+          glow: "rgba(251, 113, 133, 0.68)"
+        };
+      }
+
+      if (score < 75) {
+        return {
+          start: "#a855f7",
+          end: "#ec4899",
+          glow: "rgba(236, 72, 153, 0.62)"
+        };
+      }
+
+      return {
+        start: "#c084fc",
+        end: "#f472b6",
+        glow: "rgba(244, 114, 182, 0.74)"
+      };
+    }
+
+    function setStatus(message, isError = false) {
+      statusEl.textContent = message;
+      statusEl.classList.toggle("error", isError);
+    }
+
+    function setLoading(isLoading) {
+      analyzeButton.disabled = isLoading;
+      analyzeButton.textContent = isLoading ? "Analyzing..." : "Analyze Pitch";
+    }
+  </script>
+</body>
+</html>
